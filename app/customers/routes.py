@@ -24,6 +24,10 @@ service = CustomerService()
     tags=["Customers"],
 )
 async def create_customer(customer_data: CustomerCreate, session: SessionDep):
+    """
+    Crea un nuevo cliente.
+    Valida que el email no esté ya registrado.
+    """
     return service.create_customer(customer_data, session)
 
 

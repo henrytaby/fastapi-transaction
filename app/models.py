@@ -85,8 +85,7 @@ class CustomerBase(SQLModel):
     name: str = Field(default=None)
     description: str | None = Field(default=None)
     email: EmailStr = Field(default=None)
-    age: int = Field(default=None)
-
+    age: int = Field(default=None, ge=18)
 
 class CustomerCreate(CustomerBase):
     @field_validator("email")
@@ -99,10 +98,8 @@ class CustomerCreate(CustomerBase):
             raise ValueError("This email is already registered")
         return value
 
-
 class CustomerUpdate(CustomerBase):
     pass
-
 
 class Customer(CustomerBase, table=True):
     id: int | None = Field(default=None, primary_key=True)

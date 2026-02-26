@@ -13,19 +13,43 @@ from app.models import (
     TransactionCreate,
 )
 
+import logging
+import os
+from datetime import datetime
+
+# Configuración de carpeta de logs
+LOG_DIR = "logs"
+os.makedirs(LOG_DIR, exist_ok=True)
+
+def get_logger(log_type: str):
+    today = datetime.now().strftime("%Y-%m-%d")
+    log_path = os.path.join(LOG_DIR, f"{log_type}_customer_{today}.log")
+    logger = logging.getLogger(log_path)
+    if not logger.hasHandlers():
+        handler = logging.FileHandler(log_path)
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        logger.setLevel(logging.INFO)
+    return logger
+
 
 class CustomerService:
     # CREATE
     # ----------------------
     def create_customer(self, customer_data: CustomerCreate, session: SessionDep):
+        success_logger = get_logger("success")
+        error_logger = get_logger("error")
         try:
             customer = Customer.model_validate(customer_data.model_dump())
             session.add(customer)
             session.commit()
             session.refresh(customer)
+            success_logger.info(f"Customer created: {customer.model_dump()}")
             return customer
-        except Exception:
-            session.rollback
+        except Exception as e:
+            session.rollback()
+            error_logger.error(f"Error creating customer: {customer_data.model_dump()} | Exception: {str(e)}")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Internal Server error, create customer",
