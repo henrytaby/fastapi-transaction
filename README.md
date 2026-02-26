@@ -52,9 +52,7 @@ Sigue estos pasos para configurar el proyecto en tu entorno local utilizando un 
 4. **Instalar dependencias**
 
    ```bash
-   pip install fastapi uvicorn sqlmodel
-   # O si tienes un archivo de requerimientos:
-   # pip install -r requirements.txt
+   pip install -r requirements.txt
    ```
 
 ## Ejecución
@@ -62,7 +60,7 @@ Sigue estos pasos para configurar el proyecto en tu entorno local utilizando un 
 Para iniciar el servidor de desarrollo:
 
 ```bash
-uvicorn app.main:app --reload
+fastapi dev app/main.py
 ```
 
 El servidor estará disponible en `http://127.0.0.1:8000`.
